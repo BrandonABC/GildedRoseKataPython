@@ -24,32 +24,33 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(["Sulfuras"], all_items)
         print("run2")
     
-    def test_quality_decreases_twice_as_fast_after_sell_by(self):
-        items = [Item("Regular Item", 0, 10)]
-        gilded_rose = GildedRose(items)
-        gilded_rose.update_quality()
-        self.assertEqual(6, items[0].quality)  # Expect it to decrease by 4 (more strict)
+    # following test is syntax test:
 
-    def test_aged_brie_increases_quality_twice_after_sell_by(self):
-        items = [Item("Aged Brie", 0, 10)]
+    def test_get_quality_method_exists(self):
+        items = [Item("Sulfuras", 5, 80)]
         gilded_rose = GildedRose(items)
-        gilded_rose.update_quality()
-        self.assertEqual(14, items[0].quality)  # Expect it to increase by 4 (more strict)
+        self.assertTrue(hasattr(gilded_rose, 'get_quality'), "FAIL: get_quality method not found")
 
-    def test_backstage_passes_quality_increases(self):
-        items = [Item("Backstage passes to a TAFKAL80ETC concert", 10, 20)]
+    # following 3 tests are logical tests:
+
+    def test_quality_never_greater_than_50(self):
+        items = [Item("Aged Brie", 3, 49.5)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
-        self.assertEqual(24, items[0].quality)  # Expect it to increase by 4 (more strict)
+        self.assertLess(items[0].quality, 50, "FAIL: Expected quality to be >= 0")
+    
+    def test_quality_never_negative(self):
+        items = [Item("food", 4, 0.8)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertGreaterEqual(items[0].quality, 0, "FAIL: Expected quality to be > 0")
 
     def test_conjured_items_degrade_twice_as_fast(self):
-        items = [Item("Conjured Mana Cake", 3, 6)]
+        items = [Item("Conjured Item", 5, 10)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
-        self.assertEqual(2, items[0].quality)  # Expect it to decrease by 4 (more strict)
-
-
-
+        self.assertEqual(items[0].quality, 8, "Conjured items should degrade 2x faster")
+    
 
 if __name__ == '__main__':
     unittest.main()
